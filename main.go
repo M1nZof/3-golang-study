@@ -1,20 +1,20 @@
-package golangstudy
+package main
 
 import "time"
 
 type Bin struct {
-	id        string
-	private   bool
-	createdAt time.Time
-	name      string
+	Id        string
+	Private   bool
+	CreatedAt time.Time
+	Name      string
 }
 
 func newBin(id, name string, private bool, createdAt time.Time) *Bin {
 	res := Bin{
-		id:        id,
-		private:   private,
-		createdAt: createdAt,
-		name:      name,
+		Id:        id,
+		Private:   private,
+		CreatedAt: createdAt,
+		Name:      name,
 	}
 	return &res
 }
@@ -23,9 +23,9 @@ type BinList struct {
 	bins []Bin
 }
 
-func newBinList(bins *[]Bin) *BinList {
+func newBinList(bins []Bin) *BinList {
 	res := BinList{
-		bins: *bins,
+		bins: bins,
 	}
 	return &res
 }
