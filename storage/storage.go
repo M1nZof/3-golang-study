@@ -11,7 +11,7 @@ import (
 
 type Storage interface {
 	Write(bins.BinList) error
-	Read() (string, error)
+	Read() (*bins.BinList, error)
 }
 
 type JsonStorage struct {
@@ -24,28 +24,38 @@ func (js *JsonStorage) Write(content bins.BinList) error {
 		fmt.Println("Ошибка сериализации структуры:", err)
 		return err
 	}
-	file, err := os.Create(js.FilePath)
+
+	f, err := os.Create(js.FilePath)
 	if err != nil {
-		fmt.Println("Ошибка создания файла", err)
+		fmt.Println("Ошибка создания файла:", err)
 		return err
 	}
-	_, err = file.Write(data)
+	defer f.Close()
+
+	_, err = f.Write(data)
 	if err != nil {
-		fmt.Println("Ошибка записи данных в файл", err)
+		fmt.Println("Ошибка записи данных в файл:", err)
 		return err
 	}
 	return nil
 }
 
-func (js *JsonStorage) Read() (string, error) {
+func (js *JsonStorage) Read() (*bins.BinList, error) {
 	if !file.IsJsonExtension(js.FilePath) {
-		return "", errors.New("Файл не является JSON")
+		return nil, errors.New("файл не является JSON")
 	}
+
 	data, err := os.ReadFile(js.FilePath)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return string(data), nil
+
+	var list bins.BinList
+	if err := json.Unmarshal(data, &list); err != nil {
+		fmt.Println("Ошибка десериализации структуры:", err)
+		return nil, err
+	}
+	return &list, nil
 }
 
 func NewJsonStorage() Storage {

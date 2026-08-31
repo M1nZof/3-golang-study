@@ -9,7 +9,7 @@ type Bin struct {
 	Name      string    `json:"name"`
 }
 
-func newBin(id, name string, private bool, createdAt time.Time) *Bin {
+func NewBin(id, name string, private bool, createdAt time.Time) *Bin {
 	res := Bin{
 		Id:        id,
 		Private:   private,
@@ -23,7 +23,7 @@ type BinList struct {
 	Bins []Bin `json:"bins"`
 }
 
-func newBinList(bins []Bin) *BinList {
+func NewBinList(bins []Bin) *BinList {
 	res := BinList{
 		Bins: bins,
 	}
