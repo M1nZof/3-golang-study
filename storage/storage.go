@@ -9,15 +9,22 @@ import (
 	"os"
 )
 
-const FilePath = "my_awesome_bin.json"
+type Storage interface {
+	Write(bins.BinList) error
+	Read() (string, error)
+}
 
-func WriteBinFile(content bins.BinList) error {
+type JsonStorage struct {
+	FilePath string
+}
+
+func (js *JsonStorage) Write(content bins.BinList) error {
 	data, err := json.Marshal(content)
 	if err != nil {
 		fmt.Println("Ошибка сериализации структуры:", err)
 		return err
 	}
-	file, err := os.Create(FilePath)
+	file, err := os.Create(js.FilePath)
 	if err != nil {
 		fmt.Println("Ошибка создания файла", err)
 		return err
@@ -30,13 +37,19 @@ func WriteBinFile(content bins.BinList) error {
 	return nil
 }
 
-func ReadBinFile() (string, error) {
-	if !file.IsJsonExtension(FilePath) {
+func (js *JsonStorage) Read() (string, error) {
+	if !file.IsJsonExtension(js.FilePath) {
 		return "", errors.New("Файл не является JSON")
 	}
-	data, err := os.ReadFile(FilePath)
+	data, err := os.ReadFile(js.FilePath)
 	if err != nil {
 		return "", err
 	}
 	return string(data), nil
+}
+
+func NewJsonStorage() Storage {
+	return &JsonStorage{
+		FilePath: "my_awesome_bin.json",
+	}
 }
